@@ -1,6 +1,6 @@
-const knex = require('knex')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const knex = require('knex');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /**
  * create a knex instance connected to postgres
@@ -9,8 +9,8 @@ const jwt = require('jsonwebtoken')
 function makeKnexInstance() {
   return knex({
     client: 'pg',
-    connection: process.env.TEST_DB_URL,
-  })
+    connection: process.env.TEST_DB_URL
+  });
 }
 
 /**
@@ -23,15 +23,15 @@ function makeUsersArray() {
       id: 1,
       username: 'test-user-1',
       name: 'Test user 1',
-      password: 'password',
+      password: 'password'
     },
     {
       id: 2,
       username: 'test-user-2',
       name: 'Test user 2',
-      password: 'password',
-    },
-  ]
+      password: 'password'
+    }
+  ];
 }
 
 /**
@@ -44,9 +44,9 @@ function makeLanguagesAndWords(user) {
     {
       id: 1,
       name: 'Test language 1',
-      user_id: user.id,
-    },
-  ]
+      user_id: user.id
+    }
+  ];
 
   const words = [
     {
@@ -54,39 +54,39 @@ function makeLanguagesAndWords(user) {
       original: 'original 1',
       translation: 'translation 1',
       language_id: 1,
-      next: 2,
+      next: 2
     },
     {
       id: 2,
       original: 'original 2',
       translation: 'translation 2',
       language_id: 1,
-      next: 3,
+      next: 3
     },
     {
       id: 3,
       original: 'original 3',
       translation: 'translation 3',
       language_id: 1,
-      next: 4,
+      next: 4
     },
     {
       id: 4,
       original: 'original 4',
       translation: 'translation 4',
       language_id: 1,
-      next: 5,
+      next: 5
     },
     {
       id: 5,
       original: 'original 5',
       translation: 'translation 5',
       language_id: 1,
-      next: null,
-    },
-  ]
+      next: null
+    }
+  ];
 
-  return [languages, words]
+  return [languages, words];
 }
 
 /**
@@ -98,9 +98,9 @@ function makeLanguagesAndWords(user) {
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
   const token = jwt.sign({ user_id: user.id }, secret, {
     subject: user.username,
-    algorithm: 'HS256',
-  })
-  return `Bearer ${token}`
+    algorithm: 'HS256'
+  });
+  return `Bearer ${token}`;
 }
 
 /**
@@ -110,8 +110,9 @@ function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
  */
 function cleanTables(db) {
   return db.transaction(trx =>
-    trx.raw(
-      `TRUNCATE
+    trx
+      .raw(
+        `TRUNCATE
         "word",
         "language",
         "user"`
@@ -123,10 +124,10 @@ function cleanTables(db) {
           trx.raw(`ALTER SEQUENCE user_id_seq minvalue 0 START WITH 1`),
           trx.raw(`SELECT setval('word_id_seq', 0)`),
           trx.raw(`SELECT setval('language_id_seq', 0)`),
-          trx.raw(`SELECT setval('user_id_seq', 0)`),
+          trx.raw(`SELECT setval('user_id_seq', 0)`)
         ])
       )
-  )
+  );
 }
 
 /**
@@ -139,15 +140,14 @@ function seedUsers(db, users) {
   const preppedUsers = users.map(user => ({
     ...user,
     password: bcrypt.hashSync(user.password, 1)
-  }))
+  }));
   return db.transaction(async trx => {
-    await trx.into('user').insert(preppedUsers)
+    await trx.into('user').insert(preppedUsers);
 
-    await trx.raw(
-      `SELECT setval('user_id_seq', ?)`,
-      [users[users.length - 1].id],
-    )
-  })
+    await trx.raw(`SELECT setval('user_id_seq', ?)`, [
+      users[users.length - 1].id
+    ]);
+  });
 }
 
 /**
@@ -159,31 +159,25 @@ function seedUsers(db, users) {
  * @returns {Promise} - when all tables seeded
  */
 async function seedUsersLanguagesWords(db, users, languages, words) {
-  await seedUsers(db, users)
+  await seedUsers(db, users);
 
   await db.transaction(async trx => {
-    await trx.into('language').insert(languages)
-    await trx.into('word').insert(words)
+    await trx.into('language').insert(languages);
+    await trx.into('word').insert(words);
 
-    const languageHeadWord = words.find(
-      w => w.language_id === languages[0].id
-    )
+    const languageHeadWord = words.find(w => w.language_id === languages[0].id);
 
     await trx('language')
       .update({ head: languageHeadWord.id })
-      .where('id', languages[0].id)
+      .where('id', languages[0].id);
 
     await Promise.all([
-      trx.raw(
-        `SELECT setval('language_id_seq', ?)`,
-        [languages[languages.length - 1].id],
-      ),
-      trx.raw(
-        `SELECT setval('word_id_seq', ?)`,
-        [words[words.length - 1].id],
-      ),
-    ])
-  })
+      trx.raw(`SELECT setval('language_id_seq', ?)`, [
+        languages[languages.length - 1].id
+      ]),
+      trx.raw(`SELECT setval('word_id_seq', ?)`, [words[words.length - 1].id])
+    ]);
+  });
 }
 
 module.exports = {
@@ -193,5 +187,5 @@ module.exports = {
   makeAuthHeader,
   cleanTables,
   seedUsers,
-  seedUsersLanguagesWords,
-}
+  seedUsersLanguagesWords
+};

@@ -9,26 +9,26 @@ INSERT INTO "user" ("id", "username", "name", "password")
 VALUES
   (
     1,
-    'admin',
-    'Dunder Mifflin Admin',
+    'demo',
+    'Demo Arigatou',
     -- password = "pass"
     '$2a$10$fCWkaGbt7ZErxaxclioLteLUgg4Q3Rp09WW0s/wSLxDKYsaGYUpjG'
   );
 
 INSERT INTO "language" ("id", "name", "user_id")
 VALUES
-  (1, 'French', 1);
+  (1, 'Japanese', 1);
 
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
 VALUES
-  (1, 1, 'entraine toi', 'practice', 2),
-  (2, 1, 'bonjour', 'hello', 3),
-  (3, 1, 'maison', 'house', 4),
-  (4, 1, 'développeur', 'developer', 5),
-  (5, 1, 'traduire', 'translate', 6),
-  (6, 1, 'incroyable', 'amazing', 7),
-  (7, 1, 'chien', 'dog', 8),
-  (8, 1, 'chat', 'cat', null);
+  (1, 1, 'hai', 'yes', 2),
+  (2, 1, 'iie', 'no', 3),
+  (3, 1, 'ohayo gozaimasu', 'good morning', 4),
+  (4, 1, 'konnichiwa', 'hello/good day', 5),
+  (5, 1, 'hajimemashite', 'nice to meet you', 6),
+  (6, 1, 'arigato', 'thank you', 7),
+  (7, 1, 'sumimasen', 'excuse me', 8),
+  (8, 1, 'gomennasai', 'sorry', null);
 
 UPDATE "language" SET head = 1 WHERE id = 1;
 
