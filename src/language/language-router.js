@@ -3,6 +3,7 @@ const LanguageService = require('./language-service');
 const { requireAuth } = require('../middleware/jwt-auth');
 
 const languageRouter = express.Router();
+const jsonParser = express.json();
 
 languageRouter.use(requireAuth).use(async (req, res, next) => {
   try {
@@ -60,9 +61,36 @@ languageRouter.get('/head', async (req, res, next) => {
   }
 });
 
-languageRouter.post('/guess', async (req, res, next) => {
-  // implement me
-  res.send('implement me!');
+languageRouter.post('/guess', jsonParser, async (req, res, next) => {
+  try {
+    if (!req.body.guess) {
+      res.status(400).json({ error: 'Guess can\'t be empty' })
+    }
+
+    const { guess } = req.body;
+    const words = await LanguageService.getLanguageWords(req.app.get('db'), req.language.id);
+    const list = LanguageService.makeLinkedList(words);
+    
+    if (guess.toLowerCase() === list.head.value.translation.toLowerCase()) {
+      list.head.value.correct_count++;
+      list.head.value.memory_value *= 2;
+      const total = req.language.total_score;
+      total++;
+      LanguageService.updateTotalScore(
+        req.app.get('db'),
+        req.language.id,
+        total
+      )
+    } else {
+      list.head.value.incorrect_count++;
+      list.head.value.memory_value = 1;
+    }
+
+    
+  }
+  catch (error) {
+    next(error)
+  }
 });
 
 module.exports = languageRouter;

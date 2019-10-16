@@ -1,3 +1,5 @@
+const LinkedList = require('../linked-list');
+
 const LanguageService = {
   getUsersLanguage(db, user_id) {
     return db
@@ -44,6 +46,18 @@ const LanguageService = {
       )
       .where({ id })
       .first();
+  },
+
+  makeLinkedList(words) {
+    const list = new LinkedList();
+    words.forEach(word => list.insertLast(word));
+    return list;
+  },
+
+  updateTotalScore(db, language_id, total) {
+    return db('language')
+      .where({ language_id })
+      .update({total_score: total});
   }
 };
 
