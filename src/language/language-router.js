@@ -85,11 +85,11 @@ languageRouter.post('/guess', jsonParser, async (req, res, next) => {
     const listSize = list.size();
 
     if (list.head.value.memory_value > listSize) {
-      list.remove(list.head);
+      list.remove(words[0]);
       list.insertLast(words[0]);
     } else {
-      list.remove(list.head);
-      list.insertAt(list.head.value.memory_value, words[0]);
+      list.remove(words[0]);
+      list.insertAt(words[0].memory_value, words[0]);
     }
 
     const arr = list.displayList();
