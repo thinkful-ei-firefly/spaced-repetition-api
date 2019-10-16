@@ -95,6 +95,11 @@ languageRouter.post('/guess', jsonParser, async (req, res, next) => {
     const arr = list.displayList();
 
     for (let i = 0; i < arr.length; i++) {
+      if (arr[i + 1]) {
+        arr[i].next = arr[i + 1].id;
+      } else {
+        arr[i].next = null;
+      }
       await LanguageService.updateWord(req.app.get('db'), arr[i].id, arr[i]);
     }
 
