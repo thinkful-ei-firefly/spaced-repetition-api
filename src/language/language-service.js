@@ -54,10 +54,16 @@ const LanguageService = {
     return list;
   },
 
-  updateTotalScore(db, language_id, total) {
+  updateTotalScore(db, id, total) {
     return db('language')
-      .where({ language_id })
-      .update({total_score: total});
+      .where({ id })
+      .update({ total_score: total });
+  },
+
+  updateWord(db, id, data) {
+    return db('word')
+      .where({ id })
+      .update({ ...data });
   }
 };
 
