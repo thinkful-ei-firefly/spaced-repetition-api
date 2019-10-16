@@ -70,9 +70,13 @@ languageRouter.post('/guess', jsonParser, async (req, res, next) => {
     const { guess } = req.body;
     const words = await LanguageService.getLanguageWords(req.app.get('db'), req.language.id);
     const list = LanguageService.makeLinkedList(words);
+    const response = {};
     
     if (guess.toLowerCase() === list.head.value.translation.toLowerCase()) {
+      response.iscorrect = true;
       list.head.value.correct_count++;
+      response.wordcorrectcount = list.head.value.correct_count;
+      response.wordincorrectcount = list.head.value.incorrect_count;
       list.head.value.memory_value *= 2;
       const total = req.language.total_score;
       total++;
@@ -80,12 +84,35 @@ languageRouter.post('/guess', jsonParser, async (req, res, next) => {
         req.app.get('db'),
         req.language.id,
         total
-      )
+      );
+      response.totalscore = total;
+      const listSize = list.size();
+      const currHead = list.head;
+      if (list.head.value.memory_value > listSize) {
+        list.remove(list.head);
+        list.insertLast(currHead);
+      } else {
+        list.remove(list.head);
+        list.insertAt(list.head.value.memory_value, currHead);
+      }
     } else {
+      response.iscorrect = false;
       list.head.value.incorrect_count++;
+      response.wordincorrectcount = list.head.value.incorrect_count;
+      response.wordcorrectcount = list.head.value.correct_count;
+      response.totalscore = req.language.total_score;
       list.head.value.memory_value = 1;
+      const currHead = list.head;
+      list.remove(list.head);
+      list.insertAt(1, currHead);
     }
-
+    
+    // need method for persisting here
+    
+    response.nextword = list.head;
+    response.answer = req.body.guess.toLowerCase();
+    
+    res.status(200).json(response);
     
   }
   catch (error) {
