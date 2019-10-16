@@ -168,3 +168,5 @@ function findLast(lst){
   }
   return tempNode;
 }
+
+module.exports = LinkedList;
