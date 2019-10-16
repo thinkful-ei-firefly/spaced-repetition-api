@@ -46,18 +46,17 @@ languageRouter.get('/head', async (req, res, next) => {
       req.app.get('db'),
       req.language.head
     );
-    const { original, correct_count, incorrect_count } = word;
-    const total_score = req.language.total_score;
+
     res.json({
-      nextWord: original,
-      totalScore: total_score,
-      wordCorrectCount: correct_count,
-      wordIncorrectCount: incorrect_count
+      nextWord: word.original,
+      totalScore: req.language.total_score,
+      wordCorrectCount: word.correct_count,
+      wordIncorrectCount: word.incorrect_count
     })
     next();
   }
-  catch (err) {
-    next(err)
+  catch (error) {
+    next(error)
   }
 });
 
