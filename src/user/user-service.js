@@ -10,9 +10,8 @@ const UserService = {
       .then(user => !!user);
   },
   insertUser(db, newUser) {
-    return db
+    return db('user')
       .insert(newUser)
-      .into('user')
       .returning('*')
       .then(([user]) => user);
   },

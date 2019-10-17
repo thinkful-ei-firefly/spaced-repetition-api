@@ -5,10 +5,9 @@ TRUNCATE
   "language",
   "user";
 
-INSERT INTO "user" ("id", "username", "name", "password")
+INSERT INTO "user" ("username", "name", "password")
 VALUES
   (
-    1,
     'demo',
     'Demo Arigatou',
     -- password = "pass"
