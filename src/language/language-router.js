@@ -119,8 +119,6 @@ languageRouter.post('/guess', jsonParser, async (req, res, next) => {
       isCorrect: guess.toLowerCase() === words[0].translation.toLowerCase()
     };
 
-    console.log(response);
-    
     return res.status(200).json(response);
   } catch (error) {
     next(error);
