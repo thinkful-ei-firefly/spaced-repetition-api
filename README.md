@@ -23,6 +23,7 @@ This app allows users to:
 To test out the app right away, log in using the demo credentials:
 
 > Username: demo
+
 > Password: pass
 
 ## Endpoints
