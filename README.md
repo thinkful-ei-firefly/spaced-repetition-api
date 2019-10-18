@@ -1,52 +1,48 @@
-# Spaced repetition API!
+# Learn Japanese Spaced Repetition API
 
-## Local dev setup
+## Live Link
 
-If using user `dunder-mifflin`:
+The API is deployed to Heroku [here](https://spaced-repetition-japanese.herokuapp.com).
 
-```bash
-mv example.env .env
-createdb -U dunder-mifflin spaced-repetition
-createdb -U dunder-mifflin spaced-repetition-test
-```
+The client is deployed to zeit
+[here](https://spaced-repetition-japanese.benjaminjrosen.now.sh) and the repo
+can be found [here](https://github.com/thinkful-ei-firefly/spaced-repetition-ben-keith).
 
-If your `dunder-mifflin` user has a password be sure to set it in `.env` for all appropriate fields. Or if using a different user, update appropriately.
+## Usage
 
-```bash
-npm install
-npm run migrate
-env MIGRATION_DB_NAME=spaced-repetition-test npm run migrate
-```
+This app allows users to:
 
-And `npm test` should work at this point
+   1. Register a new account
+   2. Log in to their account
+   3. View their words with counts for correct and incorrect guesses
+   4. View their total correct guesses
+   5. Practice words by inputing guesses and receiving feedback
+   6. Practice words in a continually changing order according to how well they
+      do on each word
+      
+To test out the app right away, log in using the demo credentials:
 
-## Configuring Postgres
+> Username: demo
+> Password: pass
 
-For tests involving time to run properly, configure your Postgres database to run in the UTC timezone.
+## Endpoints
 
-1. Locate the `postgresql.conf` file for your Postgres installation.
-   1. E.g. for an OS X, Homebrew install: `/usr/local/var/postgres/postgresql.conf`
-   2. E.g. on Windows, _maybe_: `C:\Program Files\PostgreSQL\11.2\data\postgresql.conf`
-   3. E.g  on Ubuntu 18.04 probably: '/etc/postgresql/10/main/postgresql.conf'
-2. Find the `timezone` line and set it to `UTC`:
+1. `GET /api/language/`
 
-```conf
-# - Locale and Formatting -
+This returns all the words and their associated data that match the id of the
+logged in user. This is used in the dashboard view when a user first logs in.
 
-datestyle = 'iso, mdy'
-#intervalstyle = 'postgres'
-timezone = 'UTC'
-#timezone_abbreviations = 'Default'     # Select the set of available time zone
-```
+2. `GET /api/language/head`
 
-## Scripts
+This returns the word that is currently in first place for testing the user as
+well as information about it and the next word. This is used in the client's
+`/learn` route and displays when the user clicks to begin practicing.
 
-Start the application `npm start`
+3. `POST /api/language/guess`
 
-Start nodemon for the application `npm run dev`
-
-Run the tests mode `npm test`
-
-Run the migrations up `npm run migrate`
-
-Run the migrations down `npm run migrate -- 0`
+This captures the user's inputed guess and checks it against the correct answer
+stored in the database. The server then updates the word's data appropriately
+according to whether the user's guess was correct or incorrect and also pushes
+the word back in the order of words (one space back for incorrect answer and
+further for correct) using a linked list and then updates the database so that
+the new ordering persists. 
