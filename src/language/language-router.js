@@ -31,6 +31,8 @@ languageRouter.get('/', async (req, res, next) => {
       req.language.id
     );
 
+    console.log(req.language.id);
+    
     res.json({
       language: req.language,
       words
@@ -48,6 +50,8 @@ languageRouter.get('/head', async (req, res, next) => {
       req.language.head,
       req.language.id
     );
+
+    console.log(req.language.id);
 
     res.json({
       nextWord: word.original,
