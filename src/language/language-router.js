@@ -30,8 +30,6 @@ languageRouter.get('/', async (req, res, next) => {
       req.app.get('db'),
       req.language.id
     );
-
-    console.log(req.language.id);
     
     res.json({
       language: req.language,
@@ -51,13 +49,12 @@ languageRouter.get('/head', async (req, res, next) => {
       req.language.id
     );
 
-    console.log(req.language.id);
-
     res.json({
       nextWord: word.original,
       totalScore: req.language.total_score,
       wordCorrectCount: word.correct_count,
-      wordIncorrectCount: word.incorrect_count
+      wordIncorrectCount: word.incorrect_count,
+      language: word.language_id
     });
     next();
   } catch (error) {
